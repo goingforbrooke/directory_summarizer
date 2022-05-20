@@ -3,7 +3,7 @@
 mod app;
 pub use app::TemplateApp;
 mod summarize;
-pub use summarize::make_summary;
+pub use summarize::catalog_directory;
 
 // ----------------------------------------------------------------------------
 // When compiling for web:

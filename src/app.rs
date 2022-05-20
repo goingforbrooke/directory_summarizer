@@ -1,4 +1,4 @@
-use crate::make_summary;
+use crate::catalog_directory;
 
 /// We derive Deserialize/Serialize so we can persist app state on shutdown.
 #[derive(serde::Deserialize, serde::Serialize)]
@@ -104,7 +104,7 @@ impl eframe::App for TemplateApp {
                 ui.label("Begin");
                 ui.end_row();
 
-                let found_things = make_summary();
+                let found_things = catalog_directory();
                 for (key, value) in found_things.iter() {
                     ui.label(key);
                     ui.label(value.to_string());
