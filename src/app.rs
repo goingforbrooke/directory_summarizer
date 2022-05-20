@@ -99,6 +99,17 @@ impl eframe::App for TemplateApp {
                 "Source code."
             ));
             egui::warn_if_debug_build(ui);
+            
+            egui::Grid::new("test_table").show(ui, |ui| {
+                ui.label("First row, first column");
+                ui.label("First row, second column");
+                ui.end_row();
+
+                ui.label("Second row, first column");
+                ui.label("Second row, second column");
+                ui.label("Second row, third column");
+                ui.end_row();
+            });
         });
 
         if false {
