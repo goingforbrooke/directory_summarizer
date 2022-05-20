@@ -104,10 +104,10 @@ impl eframe::App for TemplateApp {
                 ui.label("Begin");
                 ui.end_row();
 
-                let found_things = catalog_directory();
-                for (key, value) in found_things.iter() {
-                    ui.label(key);
-                    ui.label(value.to_string());
+                let file_counts = catalog_directory();
+                for (extension, file_count) in file_counts.iter() {
+                    ui.label(extension);
+                    ui.label(file_count.to_string());
                     ui.end_row();
                 }
 
