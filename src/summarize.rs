@@ -16,12 +16,6 @@ pub fn make_summary() -> HashMap<String, i128> {
         let counter = filetype_counts.entry(file_ext.to_string()).or_insert(0);
         // Increment the file path's counter by one.
         *counter += 1;
-
-        println!("{}", file_path);
-        println!("{}", file_ext);
-        println!("---");
-
     }
-    println!("{:#?}", filetype_counts);
     return filetype_counts
 }
