@@ -373,6 +373,7 @@ dependencies = [
  "serde",
  "tracing-subscriber",
  "tracing-wasm",
+ "walkdir",
 ]
 
 [[package]]

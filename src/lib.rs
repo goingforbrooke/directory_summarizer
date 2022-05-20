@@ -2,6 +2,8 @@
 
 mod app;
 pub use app::TemplateApp;
+mod summarize;
+pub use summarize::make_summary;
 
 // ----------------------------------------------------------------------------
 // When compiling for web:
