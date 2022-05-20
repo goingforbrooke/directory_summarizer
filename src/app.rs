@@ -101,13 +101,17 @@ impl eframe::App for TemplateApp {
             egui::warn_if_debug_build(ui);
             
             egui::Grid::new("test_table").show(ui, |ui| {
-                ui.label("First row, first column");
-                ui.label("First row, second column");
+                ui.label("Begin");
                 ui.end_row();
 
-                ui.label("Second row, first column");
-                ui.label("Second row, second column");
-                ui.label("Second row, third column");
+                let found_things = make_summary();
+                for (key, value) in found_things.iter() {
+                    ui.label(key);
+                    ui.label(value.to_string());
+                    ui.end_row();
+                }
+
+                ui.label("End");
                 ui.end_row();
             });
         });

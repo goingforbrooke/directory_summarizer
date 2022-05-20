@@ -5,6 +5,7 @@ use walkdir::WalkDir;
 pub fn make_summary() -> HashMap<String, i128> {
     let mut filetype_counts = HashMap::<String, i128>::new();
 
+    // todo: Check if `test_dir` exists first.
     for entry in WalkDir::new("test_dir")
             .min_depth(1)
             .into_iter()
