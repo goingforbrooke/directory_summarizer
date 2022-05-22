@@ -11,6 +11,8 @@ pub struct TemplateApp {
     // this how you opt-out of serialization of a member
     #[serde(skip)]
     value: f32,
+    #[serde(skip)]
+    file_counts: HashMap<String, i128>,
 }
 
 impl Default for TemplateApp {
@@ -19,6 +21,8 @@ impl Default for TemplateApp {
             // Example stuff:
             label: "Hello World!".to_owned(),
             value: 2.7,
+            file_counts: HashMap::from([(String::from("No data"), 0),
+                                        (String::from("No data"), 0),]),
         }
     }
 }
@@ -48,7 +52,7 @@ impl eframe::App for TemplateApp {
     /// Called each time the UI needs repainting, which may be many times per second.
     /// Put your widgets into a `SidePanel`, `TopPanel`, `CentralPanel`, `Window` or `Area`.
     fn update(&mut self, ctx: &egui::Context, frame: &mut eframe::Frame) {
-        let Self { label, value } = self;
+        let Self { label, value, file_counts } = self;
 
         // Examples of how to create different panels and windows.
         // Pick whichever suits you.
@@ -77,7 +81,7 @@ impl eframe::App for TemplateApp {
             ui.add(egui::Slider::new(value, 0.0..=10.0).text("value"));
             if ui.button("Increment").clicked() {
                 *value += 1.0;
-            }
+            };
 
             ui.with_layout(egui::Layout::bottom_up(egui::Align::LEFT), |ui| {
                 ui.horizontal(|ui| {
@@ -105,7 +109,6 @@ impl eframe::App for TemplateApp {
                 ui.label("Begin");
                 ui.end_row();
 
-                let file_counts: HashMap<String, i128> = catalog_directory();
                 for (extension, file_count) in file_counts.iter() {
                     ui.label(extension);
                     ui.label(file_count.to_string());
@@ -115,6 +118,10 @@ impl eframe::App for TemplateApp {
                 ui.label("End");
                 ui.end_row();
             });
+
+            if ui.button("Summarize").clicked() {
+                *file_counts = catalog_directory();
+            };
         });
 
         if false {
