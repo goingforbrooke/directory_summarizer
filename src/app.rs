@@ -1,4 +1,5 @@
 use crate::catalog_directory;
+use std::collections::HashMap;
 
 /// We derive Deserialize/Serialize so we can persist app state on shutdown.
 #[derive(serde::Deserialize, serde::Serialize)]
@@ -104,7 +105,7 @@ impl eframe::App for TemplateApp {
                 ui.label("Begin");
                 ui.end_row();
 
-                let file_counts = catalog_directory();
+                let file_counts: HashMap<String, i128> = catalog_directory();
                 for (extension, file_count) in file_counts.iter() {
                     ui.label(extension);
                     ui.label(file_count.to_string());
