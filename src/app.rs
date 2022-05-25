@@ -13,6 +13,8 @@ pub struct TemplateApp {
     value: f32,
     #[serde(skip)]
     file_counts: HashMap<String, i128>,
+    dropped_files: Vec<egui::DroppedFile>,
+    picked_path: Option<String>,
 }
 
 impl Default for TemplateApp {
@@ -23,6 +25,8 @@ impl Default for TemplateApp {
             value: 2.7,
             file_counts: HashMap::from([(String::from("No data"), 0),
                                         (String::from("No data"), 0),]),
+            dropped_files: Vec::new(),
+            picked_path: None,
         }
     }
 }
@@ -52,7 +56,7 @@ impl eframe::App for TemplateApp {
     /// Called each time the UI needs repainting, which may be many times per second.
     /// Put your widgets into a `SidePanel`, `TopPanel`, `CentralPanel`, `Window` or `Area`.
     fn update(&mut self, ctx: &egui::Context, frame: &mut eframe::Frame) {
-        let Self { label, value, file_counts } = self;
+        let Self { label, value, file_counts, dropped_files, picked_path} = self;
 
         // Examples of how to create different panels and windows.
         // Pick whichever suits you.
@@ -82,6 +86,22 @@ impl eframe::App for TemplateApp {
             if ui.button("Increment").clicked() {
                 *value += 1.0;
             };
+            
+            ui.label("Drag and drop files onto the window!");
+
+            if ui.button("Open folder...").clicked() {
+                if let Some(path) = rfd::FileDialog::new()
+                    .pick_folder() {
+                        self.picked_path = Some(path.display().to_string());
+                }
+            }
+
+            if let Some(picked_path) = &self.picked_path {
+                ui.horizontal(|ui| {
+                    ui.label("Picked file:");
+                    ui.monospace(picked_path);
+                });
+            }
 
             ui.with_layout(egui::Layout::bottom_up(egui::Align::LEFT), |ui| {
                 ui.horizontal(|ui| {
