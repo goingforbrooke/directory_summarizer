@@ -1,12 +1,13 @@
 use std::collections::HashMap;
+use std::path::PathBuf;
 use walkdir::WalkDir;
 
 
-pub fn catalog_directory() -> HashMap<String, i128> {
+pub fn catalog_directory(target_dir: &PathBuf) -> HashMap<String, i128> {
     let mut filetype_counts = HashMap::<String, i128>::new();
 
     // todo: Check if `test_dir` exists first.
-    for entry in WalkDir::new("test_dir")
+    for entry in WalkDir::new(target_dir)
             .min_depth(1)
             .into_iter()
             .filter_map(Result::ok)

@@ -141,7 +141,7 @@ impl eframe::App for TemplateApp {
             });
 
             if ui.button("Summarize").clicked() {
-                *file_counts = catalog_directory();
+                *file_counts = catalog_directory(&self.picked_path.as_ref().unwrap());
             };
         });
 
