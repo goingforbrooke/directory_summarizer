@@ -1,5 +1,6 @@
 use crate::catalog_directory;
 use std::collections::HashMap;
+use std::path::PathBuf;
 
 /// We derive Deserialize/Serialize so we can persist app state on shutdown.
 #[derive(serde::Deserialize, serde::Serialize)]
@@ -14,7 +15,7 @@ pub struct TemplateApp {
     #[serde(skip)]
     file_counts: HashMap<String, i128>,
     dropped_files: Vec<egui::DroppedFile>,
-    picked_path: Option<String>,
+    picked_path: Option<PathBuf>,
 }
 
 impl Default for TemplateApp {
@@ -92,14 +93,14 @@ impl eframe::App for TemplateApp {
             if ui.button("Open folder...").clicked() {
                 if let Some(path) = rfd::FileDialog::new()
                     .pick_folder() {
-                        self.picked_path = Some(path.display().to_string());
+                        self.picked_path = Some(path);
                 }
             }
 
             if let Some(picked_path) = &self.picked_path {
                 ui.horizontal(|ui| {
                     ui.label("Picked file:");
-                    ui.monospace(picked_path);
+                    ui.monospace(picked_path.display().to_string());
                 });
             }
 
