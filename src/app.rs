@@ -1,6 +1,9 @@
-use crate::catalog_directory;
 use std::collections::HashMap;
 use std::path::PathBuf;
+
+use itertools::Itertools;
+
+use crate::catalog_directory;
 
 /// We derive Deserialize/Serialize so we can persist app state on shutdown.
 #[derive(serde::Deserialize, serde::Serialize)]
@@ -107,7 +110,7 @@ impl eframe::App for TemplateApp {
                 ui.label("Begin");
                 ui.end_row();
 
-                for (extension, file_count) in file_counts.iter() {
+                for (extension, file_count) in file_counts.iter().sorted() {
                     ui.label(extension);
                     ui.label(file_count.to_string());
                     ui.end_row();
