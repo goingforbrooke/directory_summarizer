@@ -72,7 +72,7 @@ impl eframe::App for TemplateApp {
         });
 
         egui::SidePanel::left("side_panel").show(ctx, |ui| {
-            ui.heading("Left Panel Title");
+            ui.heading("Choose a Directory to Summarize");
 
             if ui.button("Open folder...").clicked() {
                 if let Some(path) = rfd::FileDialog::new()
@@ -83,7 +83,7 @@ impl eframe::App for TemplateApp {
 
             if let Some(picked_path) = &self.picked_path {
                 ui.horizontal(|ui| {
-                    ui.label("Picked file:");
+                    ui.label("Chosen directory:");
                     ui.monospace(picked_path.display().to_string());
                 });
             }
@@ -102,7 +102,7 @@ impl eframe::App for TemplateApp {
         });
 
         egui::CentralPanel::default().show(ctx, |ui| {
-            ui.heading("Central Panel Title");
+            ui.heading("Summarization by File Extension");
             
             egui::warn_if_debug_build(ui);
 
