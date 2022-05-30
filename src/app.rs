@@ -1,5 +1,6 @@
 use std::collections::HashMap;
 use std::path::PathBuf;
+use std::time::{Duration, Instant};
 
 use itertools::Itertools;
 
@@ -15,6 +16,8 @@ pub struct TemplateApp {
     #[serde(skip)]
     total_files: i128,
     picked_path: Option<PathBuf>,
+    #[serde(skip)]
+    time_taken: Duration,
 }
 
 impl Default for TemplateApp {
@@ -24,6 +27,7 @@ impl Default for TemplateApp {
             file_counts: HashMap::new(),
             total_files: 0,
             picked_path: None,
+            time_taken: Duration::ZERO,
         }
     }
 }
@@ -52,7 +56,7 @@ impl eframe::App for TemplateApp {
 
     /// Called each time the UI needs repainting, which may be many times per second.
     fn update(&mut self, ctx: &egui::Context, frame: &mut eframe::Frame) {
-        let Self { file_counts, total_files, .. } = self;
+        let Self { file_counts, total_files, time_taken, .. } = self;
 
         egui::TopBottomPanel::top("top_panel").show(ctx, |ui| {
             egui::menu::bar(ui, |ui| {
@@ -82,11 +86,13 @@ impl eframe::App for TemplateApp {
             }
 
             if ui.button("Summarize").clicked() {
+                let now: Instant = Instant::now();
                 *file_counts = catalog_directory(&self.picked_path.as_ref().unwrap());
                 *total_files = file_counts.values().sum();
+                *time_taken = now.elapsed();
             };
 
-            ui.label(format!("Summarized {} files", &total_files));
+            ui.label(format!("Summarized {} files in {} milliseconds", &total_files, &time_taken.as_millis()));
 
             ui.with_layout(egui::Layout::bottom_up(egui::Align::LEFT), |ui| {
                 ui.horizontal(|ui| {
