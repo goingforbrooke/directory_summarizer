@@ -106,16 +106,18 @@ impl eframe::App for TemplateApp {
             
             egui::warn_if_debug_build(ui);
             
-            egui::Grid::new("test_table").show(ui, |ui| {
-                ui.end_row();
-
-                for (extension, file_count) in file_counts.iter().sorted() {
-                    ui.label(extension);
-                    ui.label(file_count.to_string());
+            egui::Grid::new("test_table")
+                .striped(true)
+                .show(ui, |ui| {
                     ui.end_row();
-                }
 
-                ui.end_row();
+                    for (extension, file_count) in file_counts.iter().sorted() {
+                        ui.label(extension);
+                        ui.label(file_count.to_string());
+                        ui.end_row();
+                    }
+
+                    ui.end_row();
             });
         });
     }
