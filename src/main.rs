@@ -12,7 +12,7 @@ fn main() {
         ..Default::default()
     };
     eframe::run_native(
-        "eframe template",
+        "Directory Summarizer",
         native_options,
         Box::new(|cc| Box::new(directory_summarizer::TemplateApp::new(cc))),
     );
