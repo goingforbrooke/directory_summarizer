@@ -19,5 +19,5 @@ pub fn catalog_directory(target_dir: &PathBuf) -> HashMap<String, i128> {
         // Increment the file path's counter by one.
         *counter += 1;
     }
-    return filetype_counts
+    filetype_counts
 }
