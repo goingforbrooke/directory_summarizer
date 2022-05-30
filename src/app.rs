@@ -9,15 +9,9 @@ use crate::catalog_directory;
 #[derive(serde::Deserialize, serde::Serialize)]
 #[serde(default)] // if we add new fields, give them default values when deserializing old state
 pub struct TemplateApp {
-    // Example stuff:
-    label: String,
-
     // this how you opt-out of serialization of a member
     #[serde(skip)]
-    value: f32,
-    #[serde(skip)]
     file_counts: HashMap<String, i128>,
-    dropped_files: Vec<egui::DroppedFile>,
     picked_path: Option<PathBuf>,
 }
 
@@ -25,11 +19,8 @@ impl Default for TemplateApp {
     fn default() -> Self {
         Self {
             // Example stuff:
-            label: "Hello World!".to_owned(),
-            value: 2.7,
             file_counts: HashMap::from([(String::from("No data"), 0),
                                         (String::from("No data"), 0),]),
-            dropped_files: Vec::new(),
             picked_path: None,
         }
     }
@@ -59,7 +50,7 @@ impl eframe::App for TemplateApp {
 
     /// Called each time the UI needs repainting, which may be many times per second.
     fn update(&mut self, ctx: &egui::Context, frame: &mut eframe::Frame) {
-        let Self { label, value, file_counts, dropped_files, picked_path} = self;
+        let Self { file_counts, .. } = self;
 
         egui::TopBottomPanel::top("top_panel").show(ctx, |ui| {
             egui::menu::bar(ui, |ui| {
