@@ -104,6 +104,10 @@ impl eframe::App for TemplateApp {
                 });
             }
 
+            if ui.button("Summarize").clicked() {
+                *file_counts = catalog_directory(&self.picked_path.as_ref().unwrap());
+            };
+
             ui.with_layout(egui::Layout::bottom_up(egui::Align::LEFT), |ui| {
                 ui.horizontal(|ui| {
                     ui.spacing_mut().item_spacing.x = 0.0;
@@ -139,10 +143,6 @@ impl eframe::App for TemplateApp {
                 ui.label("End");
                 ui.end_row();
             });
-
-            if ui.button("Summarize").clicked() {
-                *file_counts = catalog_directory(&self.picked_path.as_ref().unwrap());
-            };
         });
 
         if false {
