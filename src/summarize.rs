@@ -1,10 +1,12 @@
 use std::collections::HashMap;
+use std::ffi::OsString;
 use std::path::PathBuf;
 use walkdir::WalkDir;
 
 
 pub fn catalog_directory(target_dir: &PathBuf) -> HashMap<String, i128> {
     let mut filetype_counts = HashMap::<String, i128>::new();
+    let default_extension = &OsString::from("No extension");
 
     // todo: Check if `test_dir` exists first.
     for entry in WalkDir::new(target_dir)
@@ -12,10 +14,9 @@ pub fn catalog_directory(target_dir: &PathBuf) -> HashMap<String, i128> {
             .into_iter()
             .filter_map(Result::ok)
             .filter(|e| !e.file_type().is_dir()) {
-        //let file_path = String::from(entry.path().to_string_lossy());
-        let file_ext = entry.path().extension().unwrap().to_str().unwrap();
+        let file_ext = entry.path().extension().unwrap_or(default_extension);
         // Add the file path to known file paths with a counter of 0.
-        let counter = filetype_counts.entry(file_ext.to_string()).or_insert(0);
+        let counter = filetype_counts.entry(String::from(file_ext.to_string_lossy())).or_insert(0);
         // Increment the file path's counter by one.
         *counter += 1;
     }
