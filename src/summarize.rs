@@ -8,7 +8,6 @@ pub fn catalog_directory(target_dir: &PathBuf) -> HashMap<String, i128> {
     let mut filetype_counts = HashMap::<String, i128>::new();
     let default_extension = OsString::from("No extension");
 
-    // todo: Check if `test_dir` exists first.
     for entry in WalkDir::new(target_dir)
             .min_depth(1)
             .into_iter()
