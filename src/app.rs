@@ -64,7 +64,7 @@ impl eframe::App for TemplateApp {
         egui::SidePanel::left("side_panel").show(ctx, |ui| {
             ui.heading("Choose a Directory to Summarize");
 
-            if ui.button("Open folder...").clicked() {
+            if ui.button("Open directory...").clicked() {
                 if let Some(path) = rfd::FileDialog::new()
                     .pick_folder() {
                         self.picked_path = Some(path);
