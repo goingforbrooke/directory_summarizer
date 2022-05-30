@@ -19,8 +19,7 @@ impl Default for TemplateApp {
     fn default() -> Self {
         Self {
             // Example stuff:
-            file_counts: HashMap::from([(String::from("No data"), 0),
-                                        (String::from("No data"), 0),]),
+            file_counts: HashMap::new(),
             picked_path: None,
         }
     }
