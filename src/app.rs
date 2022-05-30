@@ -105,12 +105,18 @@ impl eframe::App for TemplateApp {
             ui.heading("Central Panel Title");
             
             egui::warn_if_debug_build(ui);
+
+            egui::Grid::new("filecounts_table_headers")
+                .num_columns(2)
+                .show(ui, |ui| {
+                    ui.heading("Extension");
+                    ui.heading("File Count");
+                });
             
-            egui::Grid::new("test_table")
+            egui::Grid::new("filecounts_table_content")
                 .striped(true)
                 .num_columns(2)
                 .show(ui, |ui| {
-
                     for (extension, file_count) in file_counts.iter().sorted() {
                         ui.label(extension);
                         ui.label(file_count.to_string());
