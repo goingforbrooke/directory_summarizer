@@ -1,15 +1,15 @@
 [package]
-name = "eframe_template"
-default-run = "eframe_template_bin"
+name = "directory_summarizer"
+default-run = "directory_summarizer_bin"
 version = "0.1.0"
-authors = ["Emil Ernerfeldt <emil.ernerfeldt@gmail.com>"]
+authors = ["Brooke <12855764+goingforbrooke@users.noreply.github.com>"]
 edition = "2021"
 rust-version = "1.60"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [[bin]]
-name = "eframe_template_bin"
+name = "directory_summarizer_bin"
 path = "src/main.rs"
 
 [lib]
@@ -20,6 +20,9 @@ crate-type = ["cdylib", "rlib"]
 egui = "0.18.0"
 eframe = { version = "0.18.0", features = ["persistence"] }
 serde = { version = "1", features = ["derive"] } # You only need this if you want app persistence
+walkdir = "2.3.2"
+rfd = "0.8.2"
+itertools = "0.10.3"
 
 # native:
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]

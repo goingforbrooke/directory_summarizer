@@ -1,21 +1,33 @@
+use std::collections::HashMap;
+use std::path::PathBuf;
+use std::time::{Duration, Instant};
+
+use itertools::Itertools;
+
+use crate::catalog_directory;
+
 /// We derive Deserialize/Serialize so we can persist app state on shutdown.
 #[derive(serde::Deserialize, serde::Serialize)]
 #[serde(default)] // if we add new fields, give them default values when deserializing old state
 pub struct TemplateApp {
-    // Example stuff:
-    label: String,
-
     // this how you opt-out of serialization of a member
     #[serde(skip)]
-    value: f32,
+    file_counts: HashMap<String, i128>,
+    #[serde(skip)]
+    total_files: i128,
+    picked_path: Option<PathBuf>,
+    #[serde(skip)]
+    time_taken: Duration,
 }
 
 impl Default for TemplateApp {
     fn default() -> Self {
         Self {
             // Example stuff:
-            label: "Hello World!".to_owned(),
-            value: 2.7,
+            file_counts: HashMap::new(),
+            total_files: 0,
+            picked_path: None,
+            time_taken: Duration::ZERO,
         }
     }
 }
@@ -37,23 +49,16 @@ impl TemplateApp {
 }
 
 impl eframe::App for TemplateApp {
-    /// Called by the frame work to save state before shutdown.
+    /// Called by the framework to save state before shutdown.
     fn save(&mut self, storage: &mut dyn eframe::Storage) {
         eframe::set_value(storage, eframe::APP_KEY, self);
     }
 
     /// Called each time the UI needs repainting, which may be many times per second.
-    /// Put your widgets into a `SidePanel`, `TopPanel`, `CentralPanel`, `Window` or `Area`.
     fn update(&mut self, ctx: &egui::Context, frame: &mut eframe::Frame) {
-        let Self { label, value } = self;
-
-        // Examples of how to create different panels and windows.
-        // Pick whichever suits you.
-        // Tip: a good default choice is to just keep the `CentralPanel`.
-        // For inspiration and more examples, go to https://emilk.github.io/egui
+        let Self { file_counts, total_files, time_taken, .. } = self;
 
         egui::TopBottomPanel::top("top_panel").show(ctx, |ui| {
-            // The top panel is often a good place for a menu bar:
             egui::menu::bar(ui, |ui| {
                 ui.menu_button("File", |ui| {
                     if ui.button("Quit").clicked() {
@@ -64,48 +69,63 @@ impl eframe::App for TemplateApp {
         });
 
         egui::SidePanel::left("side_panel").show(ctx, |ui| {
-            ui.heading("Side Panel");
+            ui.heading("Choose a Directory to Summarize");
 
-            ui.horizontal(|ui| {
-                ui.label("Write something: ");
-                ui.text_edit_singleline(label);
-            });
-
-            ui.add(egui::Slider::new(value, 0.0..=10.0).text("value"));
-            if ui.button("Increment").clicked() {
-                *value += 1.0;
+            if ui.button("Open directory...").clicked() {
+                if let Some(path) = rfd::FileDialog::new()
+                    .pick_folder() {
+                        self.picked_path = Some(path);
+                }
             }
+
+            if let Some(picked_path) = &self.picked_path {
+                ui.horizontal(|ui| {
+                    ui.label("Chosen directory:");
+                    ui.monospace(picked_path.display().to_string());
+                });
+            }
+
+            if ui.button("Summarize").clicked() {
+                let now: Instant = Instant::now();
+                *file_counts = catalog_directory(&self.picked_path.as_ref().unwrap());
+                *total_files = file_counts.values().sum();
+                *time_taken = now.elapsed();
+            };
+
+            ui.label(format!("Summarized {} files in {} milliseconds", &total_files, &time_taken.as_millis()));
 
             ui.with_layout(egui::Layout::bottom_up(egui::Align::LEFT), |ui| {
                 ui.horizontal(|ui| {
                     ui.spacing_mut().item_spacing.x = 0.0;
-                    ui.label("powered by ");
-                    ui.hyperlink_to("egui", "https://github.com/emilk/egui");
-                    ui.label(" and ");
-                    ui.hyperlink_to("eframe", "https://github.com/emilk/egui/tree/master/eframe");
+                    ui.label("written with love by ");
+                    ui.hyperlink_to("Brooke", "https://github.com/goingforbrooke");
                 });
             });
         });
 
         egui::CentralPanel::default().show(ctx, |ui| {
-            // The central panel the region left after adding TopPanel's and SidePanel's
-
-            ui.heading("eframe template");
-            ui.hyperlink("https://github.com/emilk/eframe_template");
-            ui.add(egui::github_link_file!(
-                "https://github.com/emilk/eframe_template/blob/master/",
-                "Source code."
-            ));
+            ui.heading("Summarization by File Extension");
+            
             egui::warn_if_debug_build(ui);
-        });
 
-        if false {
-            egui::Window::new("Window").show(ctx, |ui| {
-                ui.label("Windows can be moved by dragging them.");
-                ui.label("They are automatically sized based on contents.");
-                ui.label("You can turn on resizing and scrolling if you like.");
-                ui.label("You would normally chose either panels OR windows.");
+            egui::Grid::new("filecounts_table_headers")
+                .num_columns(2)
+                .show(ui, |ui| {
+                    ui.heading("Extension");
+                    ui.heading("File Count");
+                });
+            
+            egui::Grid::new("filecounts_table_content")
+                .striped(true)
+                .num_columns(2)
+                .show(ui, |ui| {
+                    for (extension, file_count) in file_counts.iter().sorted() {
+                        ui.label(extension);
+                        ui.label(file_count.to_string());
+                        ui.end_row();
+                    }
+
             });
-        }
+        });
     }
 }
