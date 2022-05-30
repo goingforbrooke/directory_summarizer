@@ -107,7 +107,6 @@ impl eframe::App for TemplateApp {
             egui::warn_if_debug_build(ui);
             
             egui::Grid::new("test_table").show(ui, |ui| {
-                ui.label("Begin");
                 ui.end_row();
 
                 for (extension, file_count) in file_counts.iter().sorted() {
@@ -116,7 +115,6 @@ impl eframe::App for TemplateApp {
                     ui.end_row();
                 }
 
-                ui.label("End");
                 ui.end_row();
             });
         });
