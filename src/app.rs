@@ -108,8 +108,8 @@ impl eframe::App for TemplateApp {
             
             egui::Grid::new("test_table")
                 .striped(true)
+                .num_columns(2)
                 .show(ui, |ui| {
-                    ui.end_row();
 
                     for (extension, file_count) in file_counts.iter().sorted() {
                         ui.label(extension);
@@ -117,7 +117,6 @@ impl eframe::App for TemplateApp {
                         ui.end_row();
                     }
 
-                    ui.end_row();
             });
         });
     }
