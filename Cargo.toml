@@ -17,9 +17,6 @@ crate-type = ["cdylib", "rlib"]
 
 
 [dependencies]
-egui = "0.18.1"
-eframe = { version = "0.18.0", features = ["persistence"] }
-serde = { version = "1.0.137", features = ["derive"] } # You only need this if you want app persistence
 walkdir = "2.3.2"
 rfd = "0.8.2"
 itertools = "0.10.3"
