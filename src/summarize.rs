@@ -5,6 +5,8 @@ use walkdir::WalkDir;
 
 
 pub fn catalog_directory<'a>(target_dir: &PathBuf, extension_counts: &'a mut HashMap<String, i128>) -> &'a mut HashMap<String, i128> {
+    // Reset file extension counts to zero.
+    *extension_counts = HashMap::new();
     // Categorize all extensionless files as "No extension."
     let default_extension = OsString::from("No extension");
 
