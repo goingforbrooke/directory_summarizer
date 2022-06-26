@@ -88,9 +88,10 @@ impl eframe::App for TemplateApp {
             }
 
             if ui.button("Summarize").clicked() {
+                // Start the stopwatch for summarization time.
                 let now: Instant = Instant::now();
-                *time_taken = now.elapsed();
                 catalog_directory(&self.picked_path.as_ref().unwrap(), extension_counts);
+                *time_taken = now.elapsed();
             };
 
             ui.label(format!("Summarized {} files in {} milliseconds", &total_files, &time_taken.as_millis()));
