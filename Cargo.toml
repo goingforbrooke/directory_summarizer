@@ -13,6 +13,7 @@ name = "directory_summarizer_bin"
 path = "src/main.rs"
 
 [dependencies]
+druid = "0.7.0"
 walkdir = "2.3.2"
 rfd = "0.8.2"
 itertools = "0.10.3"
