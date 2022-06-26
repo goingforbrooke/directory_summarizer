@@ -4,8 +4,7 @@ use std::path::PathBuf;
 use walkdir::WalkDir;
 
 
-pub fn catalog_directory(target_dir: &PathBuf) -> HashMap<String, i128> {
-    let mut filetype_counts = HashMap::<String, i128>::new();
+pub fn catalog_directory<'a>(target_dir: &PathBuf, filetype_counts: &'a mut HashMap<String, i128>) -> &'a mut HashMap<String, i128> {
     let default_extension = OsString::from("No extension");
 
     for entry in WalkDir::new(target_dir)

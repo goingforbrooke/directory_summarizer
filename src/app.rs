@@ -23,7 +23,6 @@ pub struct TemplateApp {
 impl Default for TemplateApp {
     fn default() -> Self {
         Self {
-            // Example stuff:
             file_counts: HashMap::new(),
             total_files: 0,
             picked_path: None,
@@ -57,6 +56,9 @@ impl eframe::App for TemplateApp {
     /// Called each time the UI needs repainting, which may be many times per second.
     fn update(&mut self, ctx: &egui::Context, frame: &mut eframe::Frame) {
         let Self { file_counts, total_files, time_taken, .. } = self;
+        
+        // Show a live update of how many files have been summarized.
+        *total_files = file_counts.values().sum();
 
         egui::TopBottomPanel::top("top_panel").show(ctx, |ui| {
             egui::menu::bar(ui, |ui| {
@@ -87,9 +89,8 @@ impl eframe::App for TemplateApp {
 
             if ui.button("Summarize").clicked() {
                 let now: Instant = Instant::now();
-                *file_counts = catalog_directory(&self.picked_path.as_ref().unwrap());
-                *total_files = file_counts.values().sum();
                 *time_taken = now.elapsed();
+                catalog_directory(&self.picked_path.as_ref().unwrap(), file_counts);
             };
 
             ui.label(format!("Summarized {} files in {} milliseconds", &total_files, &time_taken.as_millis()));
