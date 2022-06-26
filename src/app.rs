@@ -12,7 +12,7 @@ use crate::catalog_directory;
 pub struct TemplateApp {
     // this how you opt-out of serialization of a member
     #[serde(skip)]
-    file_counts: HashMap<String, i128>,
+    extension_counts: HashMap<String, i128>,
     #[serde(skip)]
     total_files: i128,
     picked_path: Option<PathBuf>,
@@ -23,7 +23,7 @@ pub struct TemplateApp {
 impl Default for TemplateApp {
     fn default() -> Self {
         Self {
-            file_counts: HashMap::new(),
+            extension_counts: HashMap::new(),
             total_files: 0,
             picked_path: None,
             time_taken: Duration::ZERO,
@@ -55,10 +55,10 @@ impl eframe::App for TemplateApp {
 
     /// Called each time the UI needs repainting, which may be many times per second.
     fn update(&mut self, ctx: &egui::Context, frame: &mut eframe::Frame) {
-        let Self { file_counts, total_files, time_taken, .. } = self;
+        let Self { extension_counts, total_files, time_taken, .. } = self;
         
         // Show a live update of how many files have been summarized.
-        *total_files = file_counts.values().sum();
+        *total_files = extension_counts.values().sum();
 
         egui::TopBottomPanel::top("top_panel").show(ctx, |ui| {
             egui::menu::bar(ui, |ui| {
@@ -90,7 +90,7 @@ impl eframe::App for TemplateApp {
             if ui.button("Summarize").clicked() {
                 let now: Instant = Instant::now();
                 *time_taken = now.elapsed();
-                catalog_directory(&self.picked_path.as_ref().unwrap(), file_counts);
+                catalog_directory(&self.picked_path.as_ref().unwrap(), extension_counts);
             };
 
             ui.label(format!("Summarized {} files in {} milliseconds", &total_files, &time_taken.as_millis()));
@@ -116,11 +116,11 @@ impl eframe::App for TemplateApp {
                     ui.heading("File Count");
                 });
             
-            egui::Grid::new("filecounts_table_content")
+            egui::Grid::new("extension_counts_table_content")
                 .striped(true)
                 .num_columns(2)
                 .show(ui, |ui| {
-                    for (extension, file_count) in file_counts.iter().sorted() {
+                    for (extension, file_count) in extension_counts.iter().sorted() {
                         ui.label(extension);
                         ui.label(file_count.to_string());
                         ui.end_row();
