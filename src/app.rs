@@ -108,7 +108,7 @@ impl eframe::App for TemplateApp {
 
         egui::CentralPanel::default().show(ctx, |ui| {
             ui.heading("Summarization by File Extension");
-
+            ui.separator();
             egui::Grid::new("filecounts_table_headers")
                 .num_columns(2)
                 .show(ui, |ui| {
