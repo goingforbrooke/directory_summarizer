@@ -97,6 +97,7 @@ impl eframe::App for TemplateApp {
             ui.label(format!("Summarized {} files in {} milliseconds", &total_files, &time_taken.as_millis()));
 
             ui.with_layout(egui::Layout::bottom_up(egui::Align::LEFT), |ui| {
+                egui::warn_if_debug_build(ui);
                 ui.horizontal(|ui| {
                     ui.spacing_mut().item_spacing.x = 0.0;
                     ui.label("written with love by ");
@@ -107,8 +108,6 @@ impl eframe::App for TemplateApp {
 
         egui::CentralPanel::default().show(ctx, |ui| {
             ui.heading("Summarization by File Extension");
-            
-            egui::warn_if_debug_build(ui);
 
             egui::Grid::new("filecounts_table_headers")
                 .num_columns(2)
