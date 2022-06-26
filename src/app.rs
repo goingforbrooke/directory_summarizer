@@ -70,7 +70,7 @@ impl eframe::App for TemplateApp {
             });
         });
 
-        egui::SidePanel::left("side_panel").show(ctx, |ui| {
+        egui::SidePanel::left("left_panel").show(ctx, |ui| {
             ui.heading("Choose a Directory to Summarize");
 
             if ui.button("Open directory...").clicked() {
