@@ -118,6 +118,8 @@ impl eframe::App for TemplateApp {
             egui::Grid::new("extension_counts_table_content")
                 .striped(true)
                 .num_columns(2)
+                // Prevent the first column header from getting smushed down.
+                .min_col_width(80.0)
                 .show(ui, |ui| {
                     ui.vertical_centered(|ui| {
                         ui.heading("Extension");
