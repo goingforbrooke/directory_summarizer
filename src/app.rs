@@ -67,6 +67,7 @@ impl eframe::App for TemplateApp {
                         frame.quit();
                     }
                 });
+                egui::widgets::global_dark_light_mode_switch(ui);
             });
         });
 
