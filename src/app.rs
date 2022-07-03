@@ -114,17 +114,18 @@ impl eframe::App for TemplateApp {
                 ui.separator();
             });
 
-            egui::Grid::new("filecounts_table_headers")
-                .num_columns(2)
-                .show(ui, |ui| {
-                    ui.heading("Extension");
-                    ui.heading("File Count");
-                });
             
             egui::Grid::new("extension_counts_table_content")
                 .striped(true)
                 .num_columns(2)
                 .show(ui, |ui| {
+                    ui.horizontal_centered(|ui| {
+                        ui.heading("Extension");
+                    });
+                    ui.horizontal_centered(|ui| {
+                        ui.heading("File Count");
+                    });
+                    ui.end_row();
                     for (extension, file_count) in extension_counts.iter().sorted() {
                         ui.label(extension);
                         ui.label(file_count.to_string());
