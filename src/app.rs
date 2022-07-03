@@ -119,10 +119,10 @@ impl eframe::App for TemplateApp {
                 .striped(true)
                 .num_columns(2)
                 .show(ui, |ui| {
-                    ui.horizontal_centered(|ui| {
+                    ui.vertical_centered(|ui| {
                         ui.heading("Extension");
                     });
-                    ui.horizontal_centered(|ui| {
+                    ui.vertical_centered(|ui| {
                         ui.heading("File Count");
                     });
                     ui.end_row();
