@@ -128,13 +128,19 @@ impl eframe::App for TemplateApp {
                         ui.heading("File Count");
                     });
                     ui.end_row();
-                    for (extension, file_count) in extension_counts.iter().sorted() {
-                        ui.label(extension);
-                        ui.label(file_count.to_string());
+                    if !extension_counts.is_empty() {
+                        for (extension, file_count) in extension_counts.iter().sorted() {
+                            ui.label(extension);
+                            ui.label(file_count.to_string());
+                            ui.end_row();
+                        }
+                    }
+                    else {
+                        ui.label("Nothing summarized");
+                        ui.label("0");
                         ui.end_row();
                     }
-
-            });
+                });
         });
     }
 }
