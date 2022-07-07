@@ -1,6 +1,6 @@
 # Directory Summarizer
 
-Directory Summarizer is a simple application for summarizing the contents of a directory. It counts each filetype by extension and displays those counts in a table.
+Directory Summarizer is a simple application for summarizing the contents of a directory. It counts each filetype by extension and displays those counts in a table. You can preview it [here](https://goingforbrooke.github.io/directory_summarizer/).
 
 ## Installation
 
