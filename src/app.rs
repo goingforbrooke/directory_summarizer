@@ -75,6 +75,8 @@ impl eframe::App for TemplateApp {
                                            .show(ctx, |ui| {
             ui.heading("Choose a Directory to Summarize");
 
+            // Add a directory picker only when compiling natively.
+            #[cfg(not(target_arch = "wasm32"))]
             if ui.button("Open directory...").clicked() {
                 if let Some(path) = rfd::FileDialog::new()
                     .pick_folder() {
