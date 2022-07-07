@@ -12,7 +12,7 @@ use crate::catalog_directory;
 pub struct TemplateApp {
     // this how you opt-out of serialization of a member
     #[serde(skip)]
-    file_counts: HashMap<String, i128>,
+    extension_counts: HashMap<String, i128>,
     #[serde(skip)]
     total_files: i128,
     picked_path: Option<PathBuf>,
@@ -23,8 +23,7 @@ pub struct TemplateApp {
 impl Default for TemplateApp {
     fn default() -> Self {
         Self {
-            // Example stuff:
-            file_counts: HashMap::new(),
+            extension_counts: HashMap::new(),
             total_files: 0,
             picked_path: None,
             time_taken: Duration::ZERO,
@@ -56,7 +55,10 @@ impl eframe::App for TemplateApp {
 
     /// Called each time the UI needs repainting, which may be many times per second.
     fn update(&mut self, ctx: &egui::Context, frame: &mut eframe::Frame) {
-        let Self { file_counts, total_files, time_taken, .. } = self;
+        let Self { extension_counts, total_files, time_taken, .. } = self;
+        
+        // Show a live update of how many files have been summarized.
+        *total_files = extension_counts.values().sum();
 
         egui::TopBottomPanel::top("top_panel").show(ctx, |ui| {
             egui::menu::bar(ui, |ui| {
@@ -65,12 +67,16 @@ impl eframe::App for TemplateApp {
                         frame.quit();
                     }
                 });
+                egui::widgets::global_dark_light_mode_switch(ui);
             });
         });
 
-        egui::SidePanel::left("side_panel").show(ctx, |ui| {
+        egui::SidePanel::left("left_panel").resizable(false)
+                                           .show(ctx, |ui| {
             ui.heading("Choose a Directory to Summarize");
 
+            // Add a directory picker only when compiling natively.
+            #[cfg(not(target_arch = "wasm32"))]
             if ui.button("Open directory...").clicked() {
                 if let Some(path) = rfd::FileDialog::new()
                     .pick_folder() {
@@ -86,15 +92,16 @@ impl eframe::App for TemplateApp {
             }
 
             if ui.button("Summarize").clicked() {
+                // Start the stopwatch for summarization time.
                 let now: Instant = Instant::now();
-                *file_counts = catalog_directory(&self.picked_path.as_ref().unwrap());
-                *total_files = file_counts.values().sum();
+                catalog_directory(&self.picked_path.as_ref().unwrap(), extension_counts);
                 *time_taken = now.elapsed();
             };
 
             ui.label(format!("Summarized {} files in {} milliseconds", &total_files, &time_taken.as_millis()));
 
             ui.with_layout(egui::Layout::bottom_up(egui::Align::LEFT), |ui| {
+                egui::warn_if_debug_build(ui);
                 ui.horizontal(|ui| {
                     ui.spacing_mut().item_spacing.x = 0.0;
                     ui.label("written with love by ");
@@ -104,28 +111,38 @@ impl eframe::App for TemplateApp {
         });
 
         egui::CentralPanel::default().show(ctx, |ui| {
-            ui.heading("Summarization by File Extension");
-            
-            egui::warn_if_debug_build(ui);
+            ui.with_layout(egui::Layout::top_down(egui::Align::Center), |ui| {
+                ui.heading("Summarization by File Extension");
+                ui.separator();
+            });
 
-            egui::Grid::new("filecounts_table_headers")
-                .num_columns(2)
-                .show(ui, |ui| {
-                    ui.heading("Extension");
-                    ui.heading("File Count");
-                });
             
-            egui::Grid::new("filecounts_table_content")
+            egui::Grid::new("extension_counts_table_content")
                 .striped(true)
                 .num_columns(2)
+                // Prevent the first column header from getting smushed down.
+                .min_col_width(80.0)
                 .show(ui, |ui| {
-                    for (extension, file_count) in file_counts.iter().sorted() {
-                        ui.label(extension);
-                        ui.label(file_count.to_string());
+                    ui.vertical_centered(|ui| {
+                        ui.heading("Extension");
+                    });
+                    ui.vertical_centered(|ui| {
+                        ui.heading("File Count");
+                    });
+                    ui.end_row();
+                    if !extension_counts.is_empty() {
+                        for (extension, file_count) in extension_counts.iter().sorted() {
+                            ui.label(extension);
+                            ui.label(file_count.to_string());
+                            ui.end_row();
+                        }
+                    }
+                    else {
+                        ui.label("Nothing summarized");
+                        ui.label("0");
                         ui.end_row();
                     }
-
-            });
+                });
         });
     }
 }
