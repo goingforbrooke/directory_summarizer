@@ -67,10 +67,12 @@ impl eframe::App for TemplateApp {
                         frame.quit();
                     }
                 });
+                egui::widgets::global_dark_light_mode_switch(ui);
             });
         });
 
-        egui::SidePanel::left("side_panel").show(ctx, |ui| {
+        egui::SidePanel::left("left_panel").resizable(false)
+                                           .show(ctx, |ui| {
             ui.heading("Choose a Directory to Summarize");
 
             if ui.button("Open directory...").clicked() {
@@ -107,26 +109,38 @@ impl eframe::App for TemplateApp {
         });
 
         egui::CentralPanel::default().show(ctx, |ui| {
-            ui.heading("Summarization by File Extension");
-            ui.separator();
-            egui::Grid::new("filecounts_table_headers")
-                .num_columns(2)
-                .show(ui, |ui| {
-                    ui.heading("Extension");
-                    ui.heading("File Count");
-                });
+            ui.with_layout(egui::Layout::top_down(egui::Align::Center), |ui| {
+                ui.heading("Summarization by File Extension");
+                ui.separator();
+            });
+
             
             egui::Grid::new("extension_counts_table_content")
                 .striped(true)
                 .num_columns(2)
+                // Prevent the first column header from getting smushed down.
+                .min_col_width(80.0)
                 .show(ui, |ui| {
-                    for (extension, file_count) in extension_counts.iter().sorted() {
-                        ui.label(extension);
-                        ui.label(file_count.to_string());
+                    ui.vertical_centered(|ui| {
+                        ui.heading("Extension");
+                    });
+                    ui.vertical_centered(|ui| {
+                        ui.heading("File Count");
+                    });
+                    ui.end_row();
+                    if !extension_counts.is_empty() {
+                        for (extension, file_count) in extension_counts.iter().sorted() {
+                            ui.label(extension);
+                            ui.label(file_count.to_string());
+                            ui.end_row();
+                        }
+                    }
+                    else {
+                        ui.label("Nothing summarized");
+                        ui.label("0");
                         ui.end_row();
                     }
-
-            });
+                });
         });
     }
 }
